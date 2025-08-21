@@ -2,38 +2,38 @@ package br.com.amorimtech.libEasy.book.domain.model;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;  // ✔ CORRETO
+import lombok.*;
 
+@Entity
 @Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Book {
-    private final BookId id;
-    private final String title;
-    private final String description;
-    private final String author;
-    @JsonProperty("ISSN")
-    private final Issn issn;
-    private final int editionNumber;
-    private final int publicationYear;
 
-    public Book(BookId id, String title, String description, String author, Issn issn, int editionNumber, int publicationYear) {
-        if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("Title cannot be null or blank");
-        }
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("Description cannot be null or blank");
-        }
-        if (author == null || author.isBlank()) {
-            throw new IllegalArgumentException("Author cannot be null or blank");
-        }
-        if (editionNumber < 1) {
-            throw new IllegalArgumentException("Edition number cannot be less than 1");
-        }
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.author = author;
-        this.issn = issn;
-        this.editionNumber = editionNumber;
-        this.publicationYear = publicationYear;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
+    private String author;
+
+    @JsonProperty("ISSN")
+    @Pattern(regexp = "^\\d{4}-\\d{3}[\\dX]$", message = "ISSN must be in the format 1234-567X")
+    @Column(nullable = false)
+    private String issn;
+
+    @Column(nullable = false)
+    private int editionNumber;
+
+    @Column(nullable = false)
+    private int publicationYear;
 }
