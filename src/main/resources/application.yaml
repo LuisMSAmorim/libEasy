@@ -1,3 +1,17 @@
 spring:
     application:
       name: libEasy
+    datasource:
+      url: jdbc:postgresql://localhost:5432/libeasy
+      username: postgres
+      password: postgres
+      driver-class-name: org.postgresql.Driver
+    jpa:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+          hibernate.jdbc.time_zone: America/Sao_Paulo
+      hibernate:
+        ddl-auto: create-drop
