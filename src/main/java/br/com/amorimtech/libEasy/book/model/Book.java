@@ -1,9 +1,9 @@
-package br.com.amorimtech.libEasy.book.domain.model;
+package br.com.amorimtech.libEasy.book.model;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;  // ✔ CORRETO
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Entity
