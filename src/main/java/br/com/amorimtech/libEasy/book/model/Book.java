@@ -26,11 +26,6 @@ public class Book {
     @Column(nullable = false)
     private String author;
 
-    @JsonProperty("ISSN")
-    @Pattern(regexp = "^\\d{4}-\\d{3}[\\dX]$", message = "ISSN must be in the format 1234-567X")
-    @Column(nullable = false)
-    private String issn;
-
     @Column(nullable = false)
     private int editionNumber;
 
