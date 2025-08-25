@@ -1,7 +1,8 @@
 package br.com.amorimtech.libEasy.book.controller;
 
+import br.com.amorimtech.libEasy.shared.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
-import br.com.amorimtech.libEasy.book.dto.ApiResponse;
+import br.com.amorimtech.libEasy.shared.dto.ApiResponse;
 import br.com.amorimtech.libEasy.book.model.Book;
 import br.com.amorimtech.libEasy.book.service.BookService;
 import org.springframework.data.domain.Page;
@@ -19,11 +20,12 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<Book>>> findAll(
+    public ResponseEntity<ApiResponse<PageResponse<Book>>> findAll(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         Page<Book> bookPage = bookService.findAll(page, size);
-        return ApiResponse.success(bookPage, HttpStatus.OK).createResponseEntity();
+        PageResponse<Book> pageResponse = PageResponse.from(bookPage);
+        return ApiResponse.success(pageResponse, HttpStatus.OK).createResponseEntity();
     }
 }
