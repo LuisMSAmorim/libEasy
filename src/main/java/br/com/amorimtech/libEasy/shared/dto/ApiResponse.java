@@ -1,4 +1,4 @@
-package br.com.amorimtech.libEasy.book.dto;
+package br.com.amorimtech.libEasy.shared.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
