@@ -19,7 +19,7 @@ public class ApiResponse<T> {
     private String errorMessage;
 
     public static <T> ApiResponse<T> success(T data, HttpStatusCode status) {
-        return new ApiResponse<T>(
+        return new ApiResponse<>(
                 true,
                 data,
                 status,
@@ -28,7 +28,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> error(HttpStatusCode status, String errorMessage) {
-        return new ApiResponse<T>(
+        return new ApiResponse<>(
                 false,
                 null,
                 status,
