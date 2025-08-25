@@ -1,9 +1,11 @@
 package br.com.amorimtech.libEasy.book.controller;
 
 
+import br.com.amorimtech.libEasy.book.dto.BookCreateRequest;
 import br.com.amorimtech.libEasy.book.dto.BookResponse;
 import br.com.amorimtech.libEasy.book.mapper.BookMapper;
 import br.com.amorimtech.libEasy.shared.dto.PageResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import br.com.amorimtech.libEasy.shared.dto.ApiResponse;
 import br.com.amorimtech.libEasy.book.model.Book;
@@ -12,10 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,5 +33,11 @@ public class BookController {
     public ResponseEntity<ApiResponse<BookResponse>> findById(@PathVariable Long id) {
         Book book = bookService.findById(id);
         return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.OK).createResponseEntity();
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<BookResponse>> save(@Valid @RequestBody BookCreateRequest bookCreateRequest) {
+        Book book = bookService.create(BookMapper.toModel(bookCreateRequest));
+        return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.CREATED).createResponseEntity();
     }
 }

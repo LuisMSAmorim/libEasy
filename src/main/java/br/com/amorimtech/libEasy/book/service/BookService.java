@@ -22,4 +22,8 @@ public class BookService {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
     }
+
+    public Book create(Book book) {
+        return bookRepository.save(book);
+    }
 }
