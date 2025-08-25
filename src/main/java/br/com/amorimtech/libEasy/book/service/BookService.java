@@ -3,7 +3,7 @@ package br.com.amorimtech.libEasy.book.service;
 
 import br.com.amorimtech.libEasy.book.model.Book;
 import br.com.amorimtech.libEasy.book.repository.BookRepository;
-import br.com.amorimtech.libEasy.exception.BookNotFoundException;
+import br.com.amorimtech.libEasy.book.exception.BookNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

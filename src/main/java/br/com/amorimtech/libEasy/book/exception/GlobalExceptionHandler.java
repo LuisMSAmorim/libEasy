@@ -1,4 +1,4 @@
-package br.com.amorimtech.libEasy.exception;
+package br.com.amorimtech.libEasy.book.exception;
 
 
 import br.com.amorimtech.libEasy.shared.dto.ApiResponse;
