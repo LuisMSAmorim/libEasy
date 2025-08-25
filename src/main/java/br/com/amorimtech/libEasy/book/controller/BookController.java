@@ -1,6 +1,8 @@
 package br.com.amorimtech.libEasy.book.controller;
 
 
+import br.com.amorimtech.libEasy.book.dto.BookResponse;
+import br.com.amorimtech.libEasy.book.mapper.BookMapper;
 import br.com.amorimtech.libEasy.shared.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
 import br.com.amorimtech.libEasy.shared.dto.ApiResponse;
@@ -22,15 +24,15 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<Book>>> findAll(Pageable pageable) {
+    public ResponseEntity<ApiResponse<PageResponse<BookResponse>>> findAll(Pageable pageable) {
         Page<Book> bookPage = bookService.findAll(pageable);
-        PageResponse<Book> pageResponse = PageResponse.from(bookPage);
+        PageResponse<BookResponse> pageResponse = PageResponse.from(bookPage.map(BookMapper::toResponse));
         return ApiResponse.success(pageResponse, HttpStatus.OK).createResponseEntity();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Book>> findById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<BookResponse>> findById(@PathVariable Long id) {
         Book book = bookService.findById(id);
-        return ApiResponse.success(book, HttpStatus.OK).createResponseEntity();
+        return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.OK).createResponseEntity();
     }
 }
