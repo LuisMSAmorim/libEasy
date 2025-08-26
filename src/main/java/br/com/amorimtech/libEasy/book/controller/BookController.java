@@ -40,4 +40,13 @@ public class BookController {
         Book book = bookService.create(BookMapper.toModel(bookCreateRequest));
         return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.CREATED).createResponseEntity();
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<BookResponse>> update(
+            @PathVariable Long id,
+            @Valid @RequestBody BookRequest bookUpdateRequest
+    ) {
+        Book book = bookService.update(id, BookMapper.toModel(bookUpdateRequest));
+        return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.OK).createResponseEntity();
+    }
 }

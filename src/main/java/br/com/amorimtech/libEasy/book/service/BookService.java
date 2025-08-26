@@ -26,4 +26,17 @@ public class BookService {
     public Book create(Book book) {
         return bookRepository.save(book);
     }
+
+    public Book update(Long id, Book bookData) {
+        Book book = this.findById(id);
+
+        book.setTitle(bookData.getTitle());
+        book.setAuthor(bookData.getAuthor());
+        book.setDescription(bookData.getDescription());
+        book.setEditionNumber(bookData.getEditionNumber());
+        book.setPublicationYear(bookData.getPublicationYear());
+
+        return bookRepository.save(book);
+    }
 }
+
