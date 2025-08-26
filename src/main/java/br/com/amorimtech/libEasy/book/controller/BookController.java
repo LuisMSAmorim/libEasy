@@ -49,4 +49,10 @@ public class BookController {
         Book book = bookService.update(id, BookMapper.toModel(bookUpdateRequest));
         return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.OK).createResponseEntity();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
+        bookService.delete(id);
+        return ApiResponse.<Void>success(null, HttpStatus.NO_CONTENT).createResponseEntity();
+    }
 }
