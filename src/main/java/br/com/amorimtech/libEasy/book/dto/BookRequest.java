@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BookCreateRequest {
+public class BookRequest {
 
     @NotBlank(message= "Title is required")
     private String title;

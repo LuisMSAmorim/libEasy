@@ -1,6 +1,6 @@
 package br.com.amorimtech.libEasy.book.mapper;
 
-import br.com.amorimtech.libEasy.book.dto.BookCreateRequest;
+import br.com.amorimtech.libEasy.book.dto.BookRequest;
 import br.com.amorimtech.libEasy.book.dto.BookResponse;
 import br.com.amorimtech.libEasy.book.model.Book;
 
@@ -17,7 +17,7 @@ public class BookMapper {
         );
     }
 
-    public static Book toModel(BookCreateRequest request) {
+    public static Book toModel(BookRequest request) {
         return new Book(
                 null,
                 request.getTitle(),

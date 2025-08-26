@@ -1,7 +1,7 @@
 package br.com.amorimtech.libEasy.book.controller;
 
 
-import br.com.amorimtech.libEasy.book.dto.BookCreateRequest;
+import br.com.amorimtech.libEasy.book.dto.BookRequest;
 import br.com.amorimtech.libEasy.book.dto.BookResponse;
 import br.com.amorimtech.libEasy.book.mapper.BookMapper;
 import br.com.amorimtech.libEasy.shared.dto.PageResponse;
@@ -36,7 +36,7 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<BookResponse>> save(@Valid @RequestBody BookCreateRequest bookCreateRequest) {
+    public ResponseEntity<ApiResponse<BookResponse>> save(@Valid @RequestBody BookRequest bookCreateRequest) {
         Book book = bookService.create(BookMapper.toModel(bookCreateRequest));
         return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.CREATED).createResponseEntity();
     }
