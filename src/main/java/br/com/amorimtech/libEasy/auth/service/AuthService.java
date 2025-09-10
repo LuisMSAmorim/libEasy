@@ -44,7 +44,6 @@ public class AuthService {
     public AuthResponse refresh(String refreshToken) {
         var email = jwtService.extractUsername(refreshToken);
         var user = userRepository.findByEmail(email).orElseThrow();
-        // valida se é refresh token (checar claim opcionalmente)
         return AuthResponse.of(jwtService.generateAccessToken(user), jwtService.generateRefreshToken(user));
     }
 }
