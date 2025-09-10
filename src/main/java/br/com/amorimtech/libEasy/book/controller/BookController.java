@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,6 +24,7 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<PageResponse<BookResponse>>> findAll(Pageable pageable) {
         Page<Book> bookPage = bookService.findAll(pageable);
         PageResponse<BookResponse> pageResponse = PageResponse.from(bookPage.map(BookMapper::toResponse));
@@ -30,18 +32,21 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<BookResponse>> findById(@PathVariable Long id) {
         Book book = bookService.findById(id);
         return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.OK).createResponseEntity();
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BookResponse>> save(@Valid @RequestBody BookRequest bookCreateRequest) {
         Book book = bookService.create(BookMapper.toModel(bookCreateRequest));
         return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.CREATED).createResponseEntity();
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BookResponse>> update(
             @PathVariable Long id,
             @Valid @RequestBody BookRequest bookUpdateRequest
@@ -51,6 +56,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         bookService.delete(id);
         return ApiResponse.<Void>success(null, HttpStatus.NO_CONTENT).createResponseEntity();
