@@ -1,6 +1,8 @@
 spring:
   application:
     name: libEasy
+  profiles:
+      active: dev
   datasource:
     url: jdbc:postgresql://localhost:5432/libeasy
     username: postgres
