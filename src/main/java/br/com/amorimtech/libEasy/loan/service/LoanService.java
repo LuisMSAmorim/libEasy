@@ -24,15 +24,6 @@ public class LoanService {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
 
-    public Page<Loan> findAll(Pageable pageable) {
-        return loanRepository.findAll(pageable);
-    }
-
-    public Page<Loan> findByUserId(Long userId, Pageable pageable) {
-        return loanRepository.findByUserId(userId, pageable);
-    }
-
-    // Método com lógica de autorização para listar empréstimos
     public Page<Loan> findAllForUser(User currentUser, Pageable pageable) {
         if (currentUser.getRole() == Role.ADMIN) {
             return loanRepository.findAll(pageable);
@@ -46,11 +37,9 @@ public class LoanService {
                 .orElseThrow(() -> new LoanNotFoundException(id));
     }
 
-    // Método com lógica de autorização para buscar empréstimo por ID
     public Loan findByIdForUser(Long id, User currentUser) {
         Loan loan = findById(id);
         
-        // Se não é ADMIN e está tentando ver empréstimo de outro usuário
         if (currentUser.getRole() != Role.ADMIN && !loan.getUserId().equals(currentUser.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only view your own loans");
         }
@@ -64,9 +53,7 @@ public class LoanService {
         return loanRepository.save(loan);
     }
 
-    // Método com lógica de autorização para criar empréstimo
     public Loan createForUser(Loan loan, User currentUser) {
-        // Se não é ADMIN, só pode criar empréstimo para si mesmo
         if (currentUser.getRole() != Role.ADMIN && !loan.getUserId().equals(currentUser.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only create loans for yourself");
         }
