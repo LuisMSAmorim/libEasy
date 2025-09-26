@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,7 +24,7 @@ public class Loan {
     private Long userId;
 
     @Column(nullable = false)
-    private Long BookId;
+    private Long bookId;
 
     @Column(nullable = false)
     private LocalDate loanDate;
