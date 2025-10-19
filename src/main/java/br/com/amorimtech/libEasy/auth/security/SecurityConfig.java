@@ -34,9 +34,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(req -> {
                     var c = new CorsConfiguration();
-                    c.setAllowedOrigins(List.of("*"));
+                    c.setAllowedOriginPatterns(List.of("*"));
                     c.setAllowedMethods(List.of("GET","POST","PATCH","DELETE","OPTIONS"));
                     c.setAllowedHeaders(List.of("*"));
+                    c.setAllowCredentials(true);
                     return c;
                 }))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
