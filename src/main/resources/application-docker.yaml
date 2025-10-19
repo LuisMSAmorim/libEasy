@@ -23,6 +23,8 @@ spring:
       pageable:
         default-page-size: 10
         max-page-size: 30
+  elasticsearch:
+    uris: http://elasticsearch:9200
 
 app:
   jwt:
