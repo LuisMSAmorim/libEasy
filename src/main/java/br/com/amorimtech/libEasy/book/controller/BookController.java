@@ -38,6 +38,20 @@ public class BookController {
         return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.OK).createResponseEntity();
     }
 
+    @GetMapping("/search")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<PageResponse<BookResponse>>> searchBooks(
+            @RequestParam(value = "q", required = false) String query,
+            Pageable pageable
+    ) {
+        Page<Book> searchResults = bookService.searchBooks(query, pageable);
+        
+        Page<BookResponse> responseResults = searchResults.map(BookMapper::toResponse);
+        
+        PageResponse<BookResponse> pageResponse = PageResponse.from(responseResults);
+        return ApiResponse.success(pageResponse, HttpStatus.OK).createResponseEntity();
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BookResponse>> save(@Valid @RequestBody BookRequest bookCreateRequest) {
