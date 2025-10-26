@@ -1,8 +1,6 @@
 spring:
   application:
     name: libEasy
-  profiles:
-      active: dev
   datasource:
     url: jdbc:postgresql://localhost:5432/libeasy
     username: postgres
@@ -23,6 +21,8 @@ spring:
       pageable:
         default-page-size: 10
         max-page-size: 30
+  elasticsearch:
+    uris: http://localhost:9200
 app:
   jwt:
     secret: "Mw4mW/A6YqPmeLQolBC6kX1DKB0Y+iOm3WmDWWqBMjc="
