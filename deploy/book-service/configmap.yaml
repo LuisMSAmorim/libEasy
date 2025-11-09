@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: book-service-config
+  namespace: libeasy
+data:
+  SPRING_PROFILES_ACTIVE: "dev"
+  DB_HOST: "book-postgres"
+  DB_PORT: "5432"
+  DB_NAME: "book_db"
+  DB_USERNAME: "postgres"
+  ELASTICSEARCH_URIS: "http://elasticsearch:9200"
+

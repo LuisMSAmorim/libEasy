@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loan-postgres-config
+  namespace: libeasy
+data:
+  POSTGRES_DB: "loan_db"
+  POSTGRES_USER: "postgres"
+

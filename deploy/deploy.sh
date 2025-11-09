@@ -51,13 +51,24 @@ print_info "Criando namespace 'libeasy'..."
 kubectl apply -f postgres/namespace.yaml
 echo ""
 
-# Passo 2: Deploy do PostgreSQL
-print_info "Deployando PostgreSQL..."
-kubectl apply -f postgres/pvc.yaml
-kubectl apply -f postgres/configmap.yaml
-kubectl apply -f postgres/deployment.yaml
-kubectl apply -f postgres/service.yaml
-print_info "PostgreSQL deployado com sucesso!"
+# Passo 2: Deploy do PostgreSQL para Book Service
+print_info "Deployando PostgreSQL para Book Service..."
+kubectl apply -f book-postgres/pvc.yaml
+kubectl apply -f book-postgres/configmap.yaml
+kubectl apply -f book-postgres/secret.yaml
+kubectl apply -f book-postgres/deployment.yaml
+kubectl apply -f book-postgres/service.yaml
+print_info "PostgreSQL (Book) deployado com sucesso!"
+echo ""
+
+# Passo 2.5: Deploy do PostgreSQL para Loan Service
+print_info "Deployando PostgreSQL para Loan Service..."
+kubectl apply -f loan-postgres/pvc.yaml
+kubectl apply -f loan-postgres/configmap.yaml
+kubectl apply -f loan-postgres/secret.yaml
+kubectl apply -f loan-postgres/deployment.yaml
+kubectl apply -f loan-postgres/service.yaml
+print_info "PostgreSQL (Loan) deployado com sucesso!"
 echo ""
 
 # Passo 3: Deploy do Elasticsearch
@@ -70,8 +81,11 @@ print_info "Elasticsearch deployado com sucesso!"
 echo ""
 
 # Aguardar PostgreSQL e Elasticsearch ficarem prontos
-print_info "Aguardando PostgreSQL ficar pronto..."
-kubectl wait --for=condition=ready pod -l app=postgres -n libeasy --timeout=300s
+print_info "Aguardando PostgreSQL (Book) ficar pronto..."
+kubectl wait --for=condition=ready pod -l app=book-postgres -n libeasy --timeout=300s
+
+print_info "Aguardando PostgreSQL (Loan) ficar pronto..."
+kubectl wait --for=condition=ready pod -l app=loan-postgres -n libeasy --timeout=300s
 
 print_info "Aguardando Elasticsearch ficar pronto..."
 kubectl wait --for=condition=ready pod -l app=elasticsearch -n libeasy --timeout=300s
@@ -129,20 +143,35 @@ print_info "Aguardando Auth Service ficar pronto..."
 kubectl wait --for=condition=ready pod -l app=auth-service -n libeasy --timeout=300s
 echo ""
 
-# Passo 7: Deploy da aplicação LibEasy
-print_info "Deployando aplicação LibEasy..."
-kubectl apply -f libeasy/configmap.yaml
-kubectl apply -f libeasy/deployment.yaml
-kubectl apply -f libeasy/service.yaml
-print_info "Aplicação LibEasy deployada com sucesso!"
+# Passo 7: Deploy do Book Service
+print_info "Deployando Book Service..."
+kubectl apply -f book-service/configmap.yaml
+kubectl apply -f book-service/secret.yaml
+kubectl apply -f book-service/deployment.yaml
+kubectl apply -f book-service/service.yaml
+print_info "Book Service deployado com sucesso!"
 echo ""
 
-# Aguardar aplicação ficar pronta
-print_info "Aguardando aplicação LibEasy ficar pronta..."
-kubectl wait --for=condition=ready pod -l app=libeasy -n libeasy --timeout=300s
+# Aguardar Book Service ficar pronto
+print_info "Aguardando Book Service ficar pronto..."
+kubectl wait --for=condition=ready pod -l app=book-service -n libeasy --timeout=300s
 echo ""
 
-# Passo 8: Deploy do Spring Cloud Gateway
+# Passo 8: Deploy do Loan Service
+print_info "Deployando Loan Service..."
+kubectl apply -f loan-service/configmap.yaml
+kubectl apply -f loan-service/secret.yaml
+kubectl apply -f loan-service/deployment.yaml
+kubectl apply -f loan-service/service.yaml
+print_info "Loan Service deployado com sucesso!"
+echo ""
+
+# Aguardar Loan Service ficar pronto
+print_info "Aguardando Loan Service ficar pronto..."
+kubectl wait --for=condition=ready pod -l app=loan-service -n libeasy --timeout=300s
+echo ""
+
+# Passo 9: Deploy do Spring Cloud Gateway
 print_info "Deployando Spring Cloud Gateway..."
 kubectl apply -f gateway/rbac.yaml
 kubectl apply -f gateway/configmap.yaml
@@ -163,12 +192,14 @@ echo "=================================================="
 echo ""
 print_info "Recursos deployados:"
 echo "  ✓ Namespace: libeasy"
-echo "  ✓ PostgreSQL (LibEasy)"
+echo "  ✓ PostgreSQL (Book Service)"
+echo "  ✓ PostgreSQL (Loan Service)"
 echo "  ✓ MySQL (Auth Service)"
-echo "  ✓ Elasticsearch"
+echo "  ✓ Elasticsearch (Book Service)"
 echo "  ✓ Redis (rate limiting)"
 echo "  ✓ Auth Service (2 réplicas - microsserviço de autenticação)"
-echo "  ✓ Aplicação LibEasy (2 réplicas - books + loans)"
+echo "  ✓ Book Service (2 réplicas - microsserviço de livros)"
+echo "  ✓ Loan Service (2 réplicas - microsserviço de empréstimos)"
 echo "  ✓ Spring Cloud Gateway (2 réplicas com JWT validation + rate limiting)"
 echo ""
 
@@ -198,8 +229,11 @@ print_info "Comandos úteis:"
 echo "  # Ver todos os recursos"
 echo "  kubectl get all -n libeasy"
 echo ""
-echo "  # Ver logs da aplicação"
-echo "  kubectl logs -f deployment/libeasy -n libeasy"
+echo "  # Ver logs do Book Service"
+echo "  kubectl logs -f deployment/book-service -n libeasy"
+echo ""
+echo "  # Ver logs do Loan Service"
+echo "  kubectl logs -f deployment/loan-service -n libeasy"
 echo ""
 echo "  # Ver logs do Gateway"
 echo "  kubectl logs -f deployment/gateway -n libeasy"

@@ -5,15 +5,15 @@ spring:
   application:
     name: gateway
   
-  # Forçar detecção do ambiente Kubernetes
+  # Configuração de plataforma (será sobrescrita por profiles)
   main:
-    cloud-platform: kubernetes
+    cloud-platform: ${CLOUD_PLATFORM:kubernetes}
   
   cloud:
-    # Habilitar Kubernetes Discovery
+    # Habilitar Kubernetes Discovery (apenas em produção)
     kubernetes:
       discovery:
-        enabled: true
+        enabled: ${KUBERNETES_DISCOVERY_ENABLED:true}
         all-namespaces: false
         namespaces:
           - libeasy
@@ -21,16 +21,16 @@ spring:
         enabled: true
     
     discovery:
-      enabled: true
+      enabled: ${DISCOVERY_ENABLED:true}
     
     loadbalancer:
       enabled: true
     
     gateway:
-      # Discovery Locator - cria rotas automaticamente
+      # Discovery Locator - cria rotas automaticamente (apenas em K8s)
       discovery:
         locator:
-          enabled: true
+          enabled: ${DISCOVERY_LOCATOR_ENABLED:true}
           lower-case-service-id: true
           url-expression: "'lb://'+serviceId"
       # Configuração global de CORS
@@ -70,7 +70,7 @@ spring:
 
         # Book Service - Read (COM validação JWT)
         - id: book-service-read
-          uri: lb://libeasy
+          uri: lb://book-service
           predicates:
             - Path=/api/books/**
             - Method=GET
@@ -85,10 +85,10 @@ spring:
 
         # Book Service - Write (COM validação JWT)
         - id: book-service-write
-          uri: lb://libeasy
+          uri: lb://book-service
           predicates:
             - Path=/api/books/**
-            - Method=POST,PUT,DELETE
+            - Method=POST,PUT,DELETE,PATCH
           filters:
             - StripPrefix=1
             - JwtAuthenticationGatewayFilter
@@ -100,7 +100,7 @@ spring:
 
         # Loan Service - Read (COM validação JWT)
         - id: loan-service-read
-          uri: lb://libeasy
+          uri: lb://loan-service
           predicates:
             - Path=/api/loans/**
             - Method=GET
@@ -115,10 +115,10 @@ spring:
 
         # Loan Service - Write (COM validação JWT)
         - id: loan-service-write
-          uri: lb://libeasy
+          uri: lb://loan-service
           predicates:
             - Path=/api/loans/**
-            - Method=POST,PUT
+            - Method=POST,PUT,DELETE,PATCH
           filters:
             - StripPrefix=1
             - JwtAuthenticationGatewayFilter
@@ -128,12 +128,26 @@ spring:
                 redis-rate-limiter.burstCapacity: 20
                 redis-rate-limiter.requestedTokens: 1
 
-        # Actuator
-        - id: actuator
-          uri: lb://libeasy
+        # Actuator - Book Service
+        - id: actuator-book-service
+          uri: lb://book-service
           predicates:
-            - Path=/actuator/**
+            - Path=/actuator/books/**
           filters:
+            - RewritePath=/actuator/books/(?<segment>.*), /actuator/$\{segment}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                redis-rate-limiter.requestedTokens: 1
+
+        # Actuator - Loan Service
+        - id: actuator-loan-service
+          uri: lb://loan-service
+          predicates:
+            - Path=/actuator/loans/**
+          filters:
+            - RewritePath=/actuator/loans/(?<segment>.*), /actuator/$\{segment}
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 100

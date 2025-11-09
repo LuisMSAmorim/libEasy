@@ -11,10 +11,15 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_PUBLIC_KEY_PATH: /keys/public_key.pem
+      KUBERNETES_DISCOVERY_ENABLED: false
+      DISCOVERY_ENABLED: false
+      DISCOVERY_LOCATOR_ENABLED: false
+      CLOUD_PLATFORM: none
     volumes:
       - ./keys:/keys:ro
     depends_on:
-      - app
+      - book-service
+      - loan-service
       - auth-service
       - redis
     networks:
@@ -44,19 +49,21 @@ services:
       - libeasy-network
     restart: unless-stopped
 
-  app:
-    build: ./libeasy
-    container_name: libeasy-app
+  book-service:
+    build: ./book-service
+    container_name: libeasy-book-service
     expose:
       - "8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/libeasy
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_PROFILES_ACTIVE: dev
-      SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
+      DB_HOST: book-postgres
+      DB_PORT: 5432
+      DB_NAME: book_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      ELASTICSEARCH_URIS: http://elasticsearch:9200
     depends_on:
-      postgres:
+      book-postgres:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
@@ -64,21 +71,60 @@ services:
       - libeasy-network
     restart: unless-stopped
 
-  postgres:
-    image: postgres:17
-    container_name: libeasy
+  loan-service:
+    build: ./loan-service
+    container_name: libeasy-loan-service
+    expose:
+      - "8080"
     environment:
-      POSTGRES_DB: libeasy
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: loan-postgres
+      DB_PORT: 5432
+      DB_NAME: loan_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      GATEWAY_URL: http://gateway:8080
+    depends_on:
+      loan-postgres:
+        condition: service_healthy
+    networks:
+      - libeasy-network
+    restart: unless-stopped
+
+  book-postgres:
+    image: postgres:17
+    container_name: libeasy-book-postgres
+    environment:
+      POSTGRES_DB: book_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - book_postgres_data:/var/lib/postgresql/data
     networks:
       - libeasy-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d libeasy"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d book_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  loan-postgres:
+    image: postgres:17
+    container_name: libeasy-loan-postgres
+    environment:
+      POSTGRES_DB: loan_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - loan_postgres_data:/var/lib/postgresql/data
+    networks:
+      - libeasy-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d loan_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -141,7 +187,8 @@ services:
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  book_postgres_data:
+  loan_postgres_data:
   elasticsearch_data:
   redis_data:
   auth_mysql_data:
