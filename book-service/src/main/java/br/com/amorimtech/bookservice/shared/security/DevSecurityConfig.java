@@ -13,11 +13,15 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
 
+/**
+ * Configuração de segurança para ambiente de desenvolvimento.
+ * Permite acesso de leitura aos livros sem autenticação para facilitar seeds de outros microsserviços.
+ */
 @Configuration
-@Profile("!dev") // Não usar em dev (usa DevSecurityConfig)
+@Profile("dev")
 @RequiredArgsConstructor
-@EnableMethodSecurity // habilita @PreAuthorize
-public class SecurityConfig {
+@EnableMethodSecurity
+public class DevSecurityConfig {
 
     private final HeaderAuthenticationFilter headerAuthFilter;
 
@@ -36,6 +40,7 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        .requestMatchers("/books", "/books/**").permitAll() // Permitir acesso de leitura em dev
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(headerAuthFilter, UsernamePasswordAuthenticationFilter.class);
