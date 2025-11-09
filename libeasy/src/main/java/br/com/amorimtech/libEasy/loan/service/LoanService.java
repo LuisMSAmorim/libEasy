@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class LoanService {
@@ -28,12 +30,12 @@ public class LoanService {
         }
     }
 
-    public Loan findById(Long id) {
+    public Loan findById(UUID id) {
         return loanRepository.findById(id)
                 .orElseThrow(() -> new LoanNotFoundException(id));
     }
 
-    public Loan findByIdForUser(Long id, UserDTO currentUser) {
+    public Loan findByIdForUser(UUID id, UserDTO currentUser) {
         Loan loan = findById(id);
 
         if (!currentUser.isAdmin() && !loan.getUserId().equals(currentUser.getId())) {
@@ -57,7 +59,7 @@ public class LoanService {
         return create(loan);
     }
 
-    public Loan update(Long id, Loan loanData) {
+    public Loan update(UUID id, Loan loanData) {
         Loan loan = this.findById(id);
 
         // No user validation - Gateway already validated authentication
@@ -73,12 +75,12 @@ public class LoanService {
         return loanRepository.save(loan);
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Loan loan = this.findById(id);
         loanRepository.delete(loan);
     }
 
-    private void validateBookExists(Long bookId) {
+    private void validateBookExists(UUID bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new BookNotFoundForLoanException(bookId);
         }

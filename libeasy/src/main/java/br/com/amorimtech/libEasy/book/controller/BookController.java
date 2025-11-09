@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/books")
@@ -33,7 +35,7 @@ public class BookController {
 
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ApiResponse<BookResponse>> findById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<BookResponse>> findById(@PathVariable UUID id) {
         Book book = bookService.findById(id);
         return ApiResponse.success(BookMapper.toResponse(book), HttpStatus.OK).createResponseEntity();
     }
@@ -62,7 +64,7 @@ public class BookController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BookResponse>> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody BookRequest bookUpdateRequest
     ) {
         Book book = bookService.update(id, BookMapper.toModel(bookUpdateRequest));
@@ -71,7 +73,7 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
         bookService.delete(id);
         return ApiResponse.<Void>success(null, HttpStatus.NO_CONTENT).createResponseEntity();
     }

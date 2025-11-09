@@ -18,6 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/loans")
@@ -35,7 +37,7 @@ public class LoanController {
 
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ApiResponse<LoanResponse>> findById(@PathVariable Long id, Authentication authentication) {
+    public ResponseEntity<ApiResponse<LoanResponse>> findById(@PathVariable UUID id, Authentication authentication) {
         UserDTO currentUser = (UserDTO) authentication.getPrincipal();
         Loan loan = loanService.findByIdForUser(id, currentUser);
         return ApiResponse.success(LoanMapper.toResponse(loan), HttpStatus.OK).createResponseEntity();
@@ -52,7 +54,7 @@ public class LoanController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<LoanResponse>> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody LoanRequest loanUpdateRequest
     ) {
         Loan loan = loanService.update(id, LoanMapper.toModel(loanUpdateRequest));
@@ -61,7 +63,7 @@ public class LoanController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
         loanService.delete(id);
         return ApiResponse.<Void>success(null, HttpStatus.NO_CONTENT).createResponseEntity();
     }
