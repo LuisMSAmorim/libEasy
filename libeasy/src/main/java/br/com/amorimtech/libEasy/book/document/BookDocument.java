@@ -19,6 +19,7 @@ import java.util.UUID;
 public class BookDocument {
     
     @Id
+    @Field(type = FieldType.Keyword)
     private UUID id;
     
     @Field(type = FieldType.Text, analyzer = "standard")
