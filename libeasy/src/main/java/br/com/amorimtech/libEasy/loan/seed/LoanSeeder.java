@@ -1,7 +1,5 @@
 package br.com.amorimtech.libEasy.loan.seed;
 
-import br.com.amorimtech.libEasy.auth.model.User;
-import br.com.amorimtech.libEasy.auth.repository.UserRepository;
 import br.com.amorimtech.libEasy.book.model.Book;
 import br.com.amorimtech.libEasy.book.repository.BookRepository;
 import br.com.amorimtech.libEasy.loan.model.Loan;
@@ -26,8 +24,11 @@ import java.util.List;
 public class LoanSeeder implements CommandLineRunner {
 
     private final LoanRepository loanRepository;
-    private final UserRepository userRepository;
     private final BookRepository bookRepository;
+
+    // User IDs created by auth-service DevAdminSeeder
+    // 1 = Admin, 2 = João Silva, 3 = Maria Santos, 4 = Pedro Oliveira, 5 = Ana Costa, 6 = Carlos Ferreira
+    private static final List<Long> USER_IDS = List.of(2L, 3L, 4L, 5L, 6L);
 
     @Override
     public void run(String... args) {
@@ -38,44 +39,42 @@ public class LoanSeeder implements CommandLineRunner {
 
         log.info("Iniciando seed de empréstimos...");
 
-        List<User> users = userRepository.findAll();
         List<Book> books = bookRepository.findAll();
 
-        if (users.isEmpty() || books.isEmpty()) {
-            log.warn("⚠️  Não há usuários ou livros para criar empréstimos");
+        if (books.isEmpty()) {
+            log.warn("⚠️  Não há livros para criar empréstimos");
             return;
         }
 
-        users = users.stream()
-                .filter(u -> u.getEmail().contains("@email.com"))
-                .toList();
+        log.info("Usando IDs de usuários criados pelo auth-service: {}", USER_IDS);
 
         List<Loan> loans = new ArrayList<>();
 
-        if (books.size() > 0 && users.size() > 0) {
+        // Empréstimos ATIVOS (ACTIVE)
+        if (books.size() > 0) {
             loans.add(Loan.builder()
                     .bookId(books.get(0).getId())
-                    .userId(users.get(0).getId())
+                    .userId(USER_IDS.get(0))  // João Silva
                     .loanDate(LocalDate.now().minusDays(5))
                     .dueDate(LocalDate.now().plusDays(9))
                     .status(LoanStatus.ACTIVE)
                     .build());
         }
 
-        if (books.size() > 1 && users.size() > 1) {
+        if (books.size() > 1) {
             loans.add(Loan.builder()
                     .bookId(books.get(1).getId())
-                    .userId(users.get(1).getId())
+                    .userId(USER_IDS.get(1))  // Maria Santos
                     .loanDate(LocalDate.now().minusDays(3))
                     .dueDate(LocalDate.now().plusDays(11))
                     .status(LoanStatus.ACTIVE)
                     .build());
         }
 
-        if (books.size() > 6 && users.size() > 2) {
+        if (books.size() > 6) {
             loans.add(Loan.builder()
                     .bookId(books.get(6).getId())
-                    .userId(users.get(2).getId())
+                    .userId(USER_IDS.get(2))  // Pedro Oliveira
                     .loanDate(LocalDate.now().minusDays(1))
                     .dueDate(LocalDate.now().plusDays(13))
                     .status(LoanStatus.ACTIVE)
@@ -83,20 +82,20 @@ public class LoanSeeder implements CommandLineRunner {
         }
 
         // Empréstimos ATRASADOS (LATE)
-        if (books.size() > 2 && users.size() > 3) {
+        if (books.size() > 2) {
             loans.add(Loan.builder()
                     .bookId(books.get(2).getId())
-                    .userId(users.get(3).getId())
+                    .userId(USER_IDS.get(3))  // Ana Costa
                     .loanDate(LocalDate.now().minusDays(20))
                     .dueDate(LocalDate.now().minusDays(6))
                     .status(LoanStatus.LATE)
                     .build());
         }
 
-        if (books.size() > 10 && users.size() > 4) {
+        if (books.size() > 10) {
             loans.add(Loan.builder()
                     .bookId(books.get(10).getId())
-                    .userId(users.get(4).getId())
+                    .userId(USER_IDS.get(4))  // Carlos Ferreira
                     .loanDate(LocalDate.now().minusDays(25))
                     .dueDate(LocalDate.now().minusDays(11))
                     .status(LoanStatus.LATE)
@@ -104,10 +103,10 @@ public class LoanSeeder implements CommandLineRunner {
         }
 
         // Empréstimos DEVOLVIDOS (RETURNED)
-        if (books.size() > 3 && users.size() > 0) {
+        if (books.size() > 3) {
             loans.add(Loan.builder()
                     .bookId(books.get(3).getId())
-                    .userId(users.get(0).getId())
+                    .userId(USER_IDS.get(0))  // João Silva
                     .loanDate(LocalDate.now().minusDays(30))
                     .dueDate(LocalDate.now().minusDays(16))
                     .returnDate(LocalDate.now().minusDays(18))
@@ -115,10 +114,10 @@ public class LoanSeeder implements CommandLineRunner {
                     .build());
         }
 
-        if (books.size() > 4 && users.size() > 1) {
+        if (books.size() > 4) {
             loans.add(Loan.builder()
                     .bookId(books.get(4).getId())
-                    .userId(users.get(1).getId())
+                    .userId(USER_IDS.get(1))  // Maria Santos
                     .loanDate(LocalDate.now().minusDays(45))
                     .dueDate(LocalDate.now().minusDays(31))
                     .returnDate(LocalDate.now().minusDays(29))
@@ -126,10 +125,10 @@ public class LoanSeeder implements CommandLineRunner {
                     .build());
         }
 
-        if (books.size() > 5 && users.size() > 2) {
+        if (books.size() > 5) {
             loans.add(Loan.builder()
                     .bookId(books.get(5).getId())
-                    .userId(users.get(2).getId())
+                    .userId(USER_IDS.get(2))  // Pedro Oliveira
                     .loanDate(LocalDate.now().minusDays(50))
                     .dueDate(LocalDate.now().minusDays(36))
                     .returnDate(LocalDate.now().minusDays(30))
@@ -137,10 +136,10 @@ public class LoanSeeder implements CommandLineRunner {
                     .build());
         }
 
-        if (books.size() > 12 && users.size() > 3) {
+        if (books.size() > 12) {
             loans.add(Loan.builder()
                     .bookId(books.get(12).getId())
-                    .userId(users.get(3).getId())
+                    .userId(USER_IDS.get(3))  // Ana Costa
                     .loanDate(LocalDate.now().minusDays(60))
                     .dueDate(LocalDate.now().minusDays(46))
                     .returnDate(LocalDate.now().minusDays(47))

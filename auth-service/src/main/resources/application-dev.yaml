@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:mysql://auth-mysql:3306/auth_db?createDatabaseIfNotExist=true
+    username: authuser
+    password: authpass
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  private-key-path: /app/keys/private_key_pkcs8.pem
+  public-key-path: /app/keys/public_key.pem
+
+logging:
+  level:
+    br.com.amorimtech: DEBUG
+    org.springframework.security: DEBUG

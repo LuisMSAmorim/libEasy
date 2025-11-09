@@ -51,6 +51,20 @@ kubectl delete -f libeasy/deployment.yaml --ignore-not-found=true
 kubectl delete -f libeasy/configmap.yaml --ignore-not-found=true
 echo ""
 
+# Remover Auth Service
+print_info "Removendo Auth Service..."
+kubectl delete -f auth-service/service.yaml --ignore-not-found=true
+kubectl delete -f auth-service/deployment.yaml --ignore-not-found=true
+kubectl delete -f auth-service/secret.yaml --ignore-not-found=true
+echo ""
+
+# Remover MySQL (Auth Service Database)
+print_info "Removendo MySQL (Auth Service)..."
+kubectl delete -f auth-mysql/service.yaml --ignore-not-found=true
+kubectl delete -f auth-mysql/statefulset.yaml --ignore-not-found=true
+kubectl delete -f auth-mysql/secret.yaml --ignore-not-found=true
+echo ""
+
 # Remover Redis
 print_info "Removendo Redis..."
 kubectl delete -f redis/service.yaml --ignore-not-found=true

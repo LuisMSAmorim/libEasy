@@ -1,10 +1,10 @@
 package br.com.amorimtech.libEasy.loan.controller;
 
-import br.com.amorimtech.libEasy.auth.model.User;
 import br.com.amorimtech.libEasy.loan.dto.LoanRequest;
 import br.com.amorimtech.libEasy.loan.dto.LoanResponse;
 import br.com.amorimtech.libEasy.loan.mapper.LoanMapper;
 import br.com.amorimtech.libEasy.shared.dto.PageResponse;
+import br.com.amorimtech.libEasy.shared.dto.UserDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import br.com.amorimtech.libEasy.shared.dto.ApiResponse;
@@ -27,7 +27,7 @@ public class LoanController {
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<PageResponse<LoanResponse>>> findAll(Pageable pageable, Authentication authentication) {
-        User currentUser = (User) authentication.getPrincipal();
+        UserDTO currentUser = (UserDTO) authentication.getPrincipal();
         Page<Loan> loanPage = loanService.findAllForUser(currentUser, pageable);
         PageResponse<LoanResponse> pageResponse = PageResponse.from(loanPage.map(LoanMapper::toResponse));
         return ApiResponse.success(pageResponse, HttpStatus.OK).createResponseEntity();
@@ -36,7 +36,7 @@ public class LoanController {
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<LoanResponse>> findById(@PathVariable Long id, Authentication authentication) {
-        User currentUser = (User) authentication.getPrincipal();
+        UserDTO currentUser = (UserDTO) authentication.getPrincipal();
         Loan loan = loanService.findByIdForUser(id, currentUser);
         return ApiResponse.success(LoanMapper.toResponse(loan), HttpStatus.OK).createResponseEntity();
     }
@@ -44,7 +44,7 @@ public class LoanController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<LoanResponse>> save(@Valid @RequestBody LoanRequest loanCreateRequest, Authentication authentication) {
-        User currentUser = (User) authentication.getPrincipal();
+        UserDTO currentUser = (UserDTO) authentication.getPrincipal();
         Loan loan = loanService.createForUser(LoanMapper.toModel(loanCreateRequest), currentUser);
         return ApiResponse.success(LoanMapper.toResponse(loan), HttpStatus.CREATED).createResponseEntity();
     }

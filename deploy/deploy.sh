@@ -89,7 +89,47 @@ print_info "Aguardando Redis ficar pronto..."
 kubectl wait --for=condition=ready pod -l app=redis -n libeasy --timeout=300s
 echo ""
 
-# Passo 5: Deploy da aplicação LibEasy
+# Passo 5: Deploy do MySQL (Auth Service Database)
+print_info "Deployando MySQL para Auth Service..."
+kubectl apply -f auth-mysql/secret.yaml
+kubectl apply -f auth-mysql/statefulset.yaml
+kubectl apply -f auth-mysql/service.yaml
+print_info "MySQL (Auth) deployado com sucesso!"
+echo ""
+
+print_info "Aguardando MySQL (Auth) ficar pronto..."
+kubectl wait --for=condition=ready pod -l app=auth-mysql -n libeasy --timeout=300s
+echo ""
+
+# Passo 6: Deploy do Auth Service
+print_info "Criando JWT keys secret..."
+if ! kubectl get secret jwt-keys -n libeasy &> /dev/null; then
+    if [ -f "../keys/private_key_pkcs8.pem" ] && [ -f "../keys/public_key.pem" ]; then
+        kubectl create secret generic jwt-keys \
+            --from-file=private_key.pem=../keys/private_key_pkcs8.pem \
+            --from-file=public_key.pem=../keys/public_key.pem \
+            --namespace=libeasy
+        print_info "JWT keys secret criado com sucesso!"
+    else
+        print_warn "Chaves JWT não encontradas em ../keys/. Execute ./generate-rsa-keys.sh primeiro."
+        print_warn "Usando secret placeholder (deploy falhará)."
+        kubectl apply -f auth-service/secret.yaml
+    fi
+else
+    print_info "JWT keys secret já existe."
+fi
+
+print_info "Deployando Auth Service..."
+kubectl apply -f auth-service/deployment.yaml
+kubectl apply -f auth-service/service.yaml
+print_info "Auth Service deployado com sucesso!"
+echo ""
+
+print_info "Aguardando Auth Service ficar pronto..."
+kubectl wait --for=condition=ready pod -l app=auth-service -n libeasy --timeout=300s
+echo ""
+
+# Passo 7: Deploy da aplicação LibEasy
 print_info "Deployando aplicação LibEasy..."
 kubectl apply -f libeasy/configmap.yaml
 kubectl apply -f libeasy/deployment.yaml
@@ -102,7 +142,7 @@ print_info "Aguardando aplicação LibEasy ficar pronta..."
 kubectl wait --for=condition=ready pod -l app=libeasy -n libeasy --timeout=300s
 echo ""
 
-# Passo 6: Deploy do Spring Cloud Gateway
+# Passo 8: Deploy do Spring Cloud Gateway
 print_info "Deployando Spring Cloud Gateway..."
 kubectl apply -f gateway/rbac.yaml
 kubectl apply -f gateway/configmap.yaml
@@ -123,11 +163,13 @@ echo "=================================================="
 echo ""
 print_info "Recursos deployados:"
 echo "  ✓ Namespace: libeasy"
-echo "  ✓ PostgreSQL"
+echo "  ✓ PostgreSQL (LibEasy)"
+echo "  ✓ MySQL (Auth Service)"
 echo "  ✓ Elasticsearch"
 echo "  ✓ Redis (rate limiting)"
-echo "  ✓ Aplicação LibEasy (2 réplicas)"
-echo "  ✓ Spring Cloud Gateway (2 réplicas com rate limiting distribuído)"
+echo "  ✓ Auth Service (2 réplicas - microsserviço de autenticação)"
+echo "  ✓ Aplicação LibEasy (2 réplicas - books + loans)"
+echo "  ✓ Spring Cloud Gateway (2 réplicas com JWT validation + rate limiting)"
 echo ""
 
 print_info "Para acessar a aplicação:"
