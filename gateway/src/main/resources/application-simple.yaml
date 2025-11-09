@@ -24,7 +24,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOriginPatterns: "*"
             allowedMethods:
               - GET
               - POST
@@ -47,19 +47,25 @@ spring:
           uri: http://libeasy:8080
           predicates:
             - Path=/api/auth/**
-        
+          filters:
+            - StripPrefix=1
+
         # Book Service
         - id: book-service
           uri: http://libeasy:8080
           predicates:
             - Path=/api/books/**
-        
+          filters:
+            - StripPrefix=1
+
         # Loan Service
         - id: loan-service
           uri: http://libeasy:8080
           predicates:
             - Path=/api/loans/**
-        
+          filters:
+            - StripPrefix=1
+
         # Actuator (health checks)
         - id: actuator
           uri: http://libeasy:8080

@@ -35,7 +35,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOriginPatterns: "*"
             allowedMethods:
               - GET
               - POST
@@ -59,6 +59,7 @@ spring:
           predicates:
             - Path=/api/auth/**
           filters:
+            - StripPrefix=1
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 10
@@ -72,12 +73,13 @@ spring:
             - Path=/api/books/**
             - Method=GET
           filters:
+            - StripPrefix=1
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 20
                 redis-rate-limiter.burstCapacity: 40
                 redis-rate-limiter.requestedTokens: 1
-        
+
         # Book Service - Write
         - id: book-service-write
           uri: http://app:8080
@@ -85,12 +87,13 @@ spring:
             - Path=/api/books/**
             - Method=POST,PUT,DELETE
           filters:
+            - StripPrefix=1
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
                 redis-rate-limiter.requestedTokens: 1
-        
+
         # Loan Service - Read
         - id: loan-service-read
           uri: http://app:8080
@@ -98,12 +101,13 @@ spring:
             - Path=/api/loans/**
             - Method=GET
           filters:
+            - StripPrefix=1
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 20
                 redis-rate-limiter.burstCapacity: 40
                 redis-rate-limiter.requestedTokens: 1
-        
+
         # Loan Service - Write
         - id: loan-service-write
           uri: http://app:8080
@@ -111,12 +115,13 @@ spring:
             - Path=/api/loans/**
             - Method=POST,PUT
           filters:
+            - StripPrefix=1
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
                 redis-rate-limiter.requestedTokens: 1
-        
+
         # Actuator
         - id: actuator
           uri: http://app:8080
