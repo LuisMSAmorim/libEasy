@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gateway-config
-  namespace: libeasy
-data:
-  JWT_PUBLIC_KEY_PATH: "/keys/public_key.pem"

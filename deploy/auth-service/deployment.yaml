@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: auth-service
-        image: libeasy/auth-service:latest
+        image: luismsamorim/auth-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8081
