@@ -53,9 +53,9 @@ spring:
       
       # Rotas diretas para Docker Compose (sem service discovery)
       routes:
-        # Auth Service
+        # Auth Service (sem validação JWT)
         - id: auth-service
-          uri: http://app:8080
+          uri: http://auth-service:8081
           predicates:
             - Path=/api/auth/**
           filters:
@@ -65,8 +65,8 @@ spring:
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
                 redis-rate-limiter.requestedTokens: 1
-        
-        # Book Service - Read
+
+        # Book Service - Read (COM validação JWT)
         - id: book-service-read
           uri: http://app:8080
           predicates:
@@ -74,13 +74,14 @@ spring:
             - Method=GET
           filters:
             - StripPrefix=1
+            - JwtAuthenticationGatewayFilter
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 20
                 redis-rate-limiter.burstCapacity: 40
                 redis-rate-limiter.requestedTokens: 1
 
-        # Book Service - Write
+        # Book Service - Write (COM validação JWT)
         - id: book-service-write
           uri: http://app:8080
           predicates:
@@ -88,13 +89,14 @@ spring:
             - Method=POST,PUT,DELETE
           filters:
             - StripPrefix=1
+            - JwtAuthenticationGatewayFilter
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
                 redis-rate-limiter.requestedTokens: 1
 
-        # Loan Service - Read
+        # Loan Service - Read (COM validação JWT)
         - id: loan-service-read
           uri: http://app:8080
           predicates:
@@ -102,13 +104,14 @@ spring:
             - Method=GET
           filters:
             - StripPrefix=1
+            - JwtAuthenticationGatewayFilter
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 20
                 redis-rate-limiter.burstCapacity: 40
                 redis-rate-limiter.requestedTokens: 1
 
-        # Loan Service - Write
+        # Loan Service - Write (COM validação JWT)
         - id: loan-service-write
           uri: http://app:8080
           predicates:
@@ -116,6 +119,7 @@ spring:
             - Method=POST,PUT
           filters:
             - StripPrefix=1
+            - JwtAuthenticationGatewayFilter
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 10
@@ -166,4 +170,10 @@ logging:
     reactor.netty: INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# JWT Configuration
+jwt:
+  public-key-path: ${JWT_PUBLIC_KEY_PATH:/keys/public_key.pem}
+  issuer: libEasy
+  audience: libEasy-api
 

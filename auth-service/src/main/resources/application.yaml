@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: auth-service
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:auth_db}?createDatabaseIfNotExist=true
+    username: ${DB_USERNAME:authuser}
+    password: ${DB_PASSWORD:authpass}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+server:
+  port: ${SERVER_PORT:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+
+jwt:
+  private-key-path: ${JWT_PRIVATE_KEY_PATH:/keys/private_key_pkcs8.pem}
+  public-key-path: ${JWT_PUBLIC_KEY_PATH:/keys/public_key.pem}
+  access-token-ttl: 900000  # 15 minutes
+  refresh-token-ttl: 1209600000  # 14 days
+  issuer: libEasy
+  audience: libEasy-api
