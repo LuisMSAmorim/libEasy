@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
 
   app:
-    build: .
+    build: ./libeasy
     container_name: libeasy-app
     expose:
       - "8080"
