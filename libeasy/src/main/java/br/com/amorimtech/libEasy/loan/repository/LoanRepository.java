@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LoanRepository extends JpaRepository<Loan, Long> {
-    Page<Loan> findByUserId(Long userId, Pageable pageable);
+import java.util.UUID;
+
+public interface LoanRepository extends JpaRepository<Loan, UUID> {
+    Page<Loan> findByUserId(UUID userId, Pageable pageable);
 }

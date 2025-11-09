@@ -6,16 +6,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class LoanRequest {
 
     @NotNull(message = "User ID is required")
-    private Long userId;
+    private UUID userId;
 
     @NotNull(message = "Book ID is required")
-    private Long bookId;
+    private UUID bookId;
 
     @NotNull(message = "Loan date is required")
     private LocalDate loanDate;

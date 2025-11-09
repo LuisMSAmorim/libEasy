@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -37,7 +38,7 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
         if (userId != null && userEmail != null && userRole != null) {
             try {
                 UserDTO user = new UserDTO(
-                        Long.parseLong(userId),
+                        UUID.fromString(userId),
                         userEmail,
                         userRole,
                         userName != null ? userName : ""
@@ -53,8 +54,8 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
                 log.debug("Authentication set from headers for user: {} (role: {})", userEmail, userRole);
-            } catch (NumberFormatException e) {
-                log.error("Invalid user ID in header: {}", userId);
+            } catch (IllegalArgumentException e) {
+                log.error("Invalid user ID UUID in header: {}", userId);
             }
         }
 

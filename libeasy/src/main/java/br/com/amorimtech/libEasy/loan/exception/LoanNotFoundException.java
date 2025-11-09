@@ -1,7 +1,9 @@
 package br.com.amorimtech.libEasy.loan.exception;
 
+import java.util.UUID;
+
 public class LoanNotFoundException extends RuntimeException {
-    public LoanNotFoundException(Long id) {
+    public LoanNotFoundException(UUID id) {
         super("Loan with id " + id + " not found");
     }
 }

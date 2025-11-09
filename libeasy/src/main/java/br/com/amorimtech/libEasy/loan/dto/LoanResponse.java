@@ -6,14 +6,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class LoanResponse {
-    private Long id;
-    private Long userId;
-    private Long bookId;
+    private UUID id;
+    private UUID userId;
+    private UUID bookId;
     private LocalDate loanDate;
     private LocalDate dueDate;
     private LocalDate returnDate;

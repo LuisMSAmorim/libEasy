@@ -9,6 +9,8 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,7 +19,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 public class BookDocument {
     
     @Id
-    private Long id;
+    private UUID id;
     
     @Field(type = FieldType.Text, analyzer = "standard")
     private String title;

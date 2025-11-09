@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +32,7 @@ public class BookService {
         return bookRepository.findAll(pageable);
     }
 
-    public Book findById(Long id) {
+    public Book findById(UUID id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
     }
@@ -48,7 +49,7 @@ public class BookService {
         return savedBook;
     }
 
-    public Book update(Long id, Book bookData) {
+    public Book update(UUID id, Book bookData) {
         Book book = this.findById(id);
 
         book.setTitle(bookData.getTitle());
@@ -68,7 +69,7 @@ public class BookService {
         return updatedBook;
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Book book = this.findById(id);
         bookRepository.delete(book);
         
@@ -90,7 +91,7 @@ public class BookService {
             elasticsearchResults = bookSearchRepository.searchByAllFields(query.trim(), pageable);
         }
         
-        List<Long> bookIds = elasticsearchResults.getContent()
+        List<UUID> bookIds = elasticsearchResults.getContent()
                 .stream()
                 .map(BookDocument::getId)
                 .toList();
@@ -101,7 +102,7 @@ public class BookService {
         
         List<Book> books = bookRepository.findAllById(bookIds);
         
-        Map<Long, Book> bookMap = books.stream()
+        Map<UUID, Book> bookMap = books.stream()
                 .collect(Collectors.toMap(Book::getId, book -> book));
         
         List<Book> orderedBooks = bookIds.stream()

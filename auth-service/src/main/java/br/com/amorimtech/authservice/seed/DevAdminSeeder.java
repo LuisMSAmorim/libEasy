@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @Profile("dev")
@@ -31,8 +32,10 @@ public class DevAdminSeeder implements CommandLineRunner {
 
         log.info("Iniciando seed de usuários...");
 
+        // Using fixed UUIDs for development seeding to ensure consistency across microservices
         List<User> users = List.of(
             User.builder()
+                .id(UUID.fromString("00000000-0000-0000-0000-000000000001"))
                 .name("Admin LibEasy")
                 .email("admin@libeasy.local")
                 .password(enc.encode("admin123"))
@@ -40,6 +43,7 @@ public class DevAdminSeeder implements CommandLineRunner {
                 .build(),
 
             User.builder()
+                .id(UUID.fromString("00000000-0000-0000-0000-000000000002"))
                 .name("João Silva")
                 .email("joao.silva@email.com")
                 .password(enc.encode("senha123"))
@@ -47,6 +51,7 @@ public class DevAdminSeeder implements CommandLineRunner {
                 .build(),
 
             User.builder()
+                .id(UUID.fromString("00000000-0000-0000-0000-000000000003"))
                 .name("Maria Santos")
                 .email("maria.santos@email.com")
                 .password(enc.encode("senha123"))
@@ -54,6 +59,7 @@ public class DevAdminSeeder implements CommandLineRunner {
                 .build(),
 
             User.builder()
+                .id(UUID.fromString("00000000-0000-0000-0000-000000000004"))
                 .name("Pedro Oliveira")
                 .email("pedro.oliveira@email.com")
                 .password(enc.encode("senha123"))
@@ -61,6 +67,7 @@ public class DevAdminSeeder implements CommandLineRunner {
                 .build(),
 
             User.builder()
+                .id(UUID.fromString("00000000-0000-0000-0000-000000000005"))
                 .name("Ana Costa")
                 .email("ana.costa@email.com")
                 .password(enc.encode("senha123"))
@@ -68,6 +75,7 @@ public class DevAdminSeeder implements CommandLineRunner {
                 .build(),
 
             User.builder()
+                .id(UUID.fromString("00000000-0000-0000-0000-000000000006"))
                 .name("Carlos Ferreira")
                 .email("carlos.ferreira@email.com")
                 .password(enc.encode("senha123"))

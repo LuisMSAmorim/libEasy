@@ -7,8 +7,10 @@ import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
-public interface BookSearchRepository extends ElasticsearchRepository<BookDocument, Long> {
+public interface BookSearchRepository extends ElasticsearchRepository<BookDocument, UUID> {
     
     /**
      * Busca em múltiplos campos (title, author, description) com relevância otimizada.
