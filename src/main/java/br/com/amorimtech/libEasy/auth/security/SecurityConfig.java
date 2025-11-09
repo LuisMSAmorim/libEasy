@@ -42,7 +42,7 @@ public class SecurityConfig {
                 }))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/actuator/health").permitAll()
+                        .requestMatchers("/auth/**", "/actuator/health", "/actuator/health/**").permitAll()
                         // Exemplo: leitura pública de livros, escrita autenticada/admin
                         .requestMatchers(HttpMethod.GET, "/books/**").permitAll()
                         .anyRequest().authenticated()

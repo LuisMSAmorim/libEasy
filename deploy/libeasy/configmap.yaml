@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: libeasy-config
+  namespace: libeasy
+data:
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/libeasy"
+  SPRING_DATASOURCE_USERNAME: "postgres"
+  SPRING_DATASOURCE_PASSWORD: "postgres"
+  SPRING_PROFILES_ACTIVE: "dev"
+  SPRING_ELASTICSEARCH_URIS: "http://elasticsearch:9200"
+

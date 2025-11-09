@@ -23,6 +23,21 @@ spring:
         max-page-size: 30
   elasticsearch:
     uris: http://localhost:9200
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
 app:
   jwt:
     secret: "Mw4mW/A6YqPmeLQolBC6kX1DKB0Y+iOm3WmDWWqBMjc="
