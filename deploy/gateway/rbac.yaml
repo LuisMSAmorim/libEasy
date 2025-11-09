@@ -1,0 +1,41 @@
+---
+# ServiceAccount para o Gateway
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gateway-sa
+  namespace: libeasy
+  labels:
+    app: gateway
+
+---
+# Role - permissões para descobrir services e endpoints
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gateway-role
+  namespace: libeasy
+rules:
+  - apiGroups: [""]
+    resources: ["services", "endpoints", "pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+
+---
+# RoleBinding - vincula o ServiceAccount à Role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gateway-rolebinding
+  namespace: libeasy
+subjects:
+  - kind: ServiceAccount
+    name: gateway-sa
+    namespace: libeasy
+roleRef:
+  kind: Role
+  name: gateway-role
+  apiGroup: rbac.authorization.k8s.io
+

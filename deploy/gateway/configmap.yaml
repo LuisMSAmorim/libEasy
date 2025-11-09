@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  namespace: libeasy
+data:
+  application.yaml: |
+    server:
+      port: 8080
+    
+    spring:
+      application:
+        name: gateway
+      
+      main:
+        cloud-platform: kubernetes
+      
+      cloud:
+        kubernetes:
+          discovery:
+            enabled: true
+            all-namespaces: false
+            namespaces:
+              - libeasy
+          reload:
+            enabled: true
+        
+        discovery:
+          enabled: true
+        
+        loadbalancer:
+          enabled: true
+        
+        gateway:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+              url-expression: "'lb://'+serviceId"
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "*"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - PATCH
+                  - OPTIONS
+                allowedHeaders: "*"
+                exposedHeaders:
+                  - Content-Length
+                  - Content-Type
+                  - X-Request-Id
+                maxAge: 3600
+                allowCredentials: true
+          
+          routes:
+            - id: auth-service
+              uri: lb://libeasy
+              predicates:
+                - Path=/api/auth/**
+            
+            - id: book-service
+              uri: lb://libeasy
+              predicates:
+                - Path=/api/books/**
+            
+            - id: loan-service
+              uri: lb://libeasy
+              predicates:
+                - Path=/api/loans/**
+            
+            - id: actuator
+              uri: lb://libeasy
+              predicates:
+                - Path=/actuator/**
+    
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,gateway
+      endpoint:
+        health:
+          show-details: always
+          probes:
+            enabled: true
+      health:
+        livenessstate:
+          enabled: true
+        readinessstate:
+          enabled: true
+        discoveryComposite:
+          enabled: true
+    
+    logging:
+      level:
+        root: INFO
+        org.springframework.cloud.gateway: INFO
+        reactor.netty: INFO
+
